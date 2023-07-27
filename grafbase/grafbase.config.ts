@@ -1,4 +1,4 @@
-import { g, config } from '@grafbase/sdk';
+import { g, config, auth } from '@grafbase/sdk';
 
 // @ts-ignore
 const User = g.model('User', {
@@ -7,10 +7,10 @@ const User = g.model('User', {
   avatarUrl: g.url(),
   description: g.string().length({ min: 2, max: 1000 }).optional(),
   githubUrl: g.url().optional(),
-  linkedinUrl: g.url().optional(), 
+  linkedInUrl: g.url().optional(), 
   projects: g.relation(() => Project).list().optional(),
-// }).auth((rules) => {
-//   rules.public().read()
+}).auth((rules) => {
+  rules.public().read()
 })
 
 // @ts-ignore
@@ -27,15 +27,15 @@ const Project = g.model('Project', {
   rules.private().create().delete().update()
 })
 
-// const jwt = auth.JWT({
-//   issuer: 'grafbase',
-//   secret:  g.env('NEXTAUTH_SECRET')
-// })
+const jwt = auth.JWT({
+  issuer: 'grafbase',
+  secret:  g.env('NEXTAUTH_SECRET')
+})
 
 export default config({
   schema: g,
-  // auth: {
-  //   providers: [jwt],
-  //   rules: (rules) => rules.private()
-  // },
+  auth: {
+    providers: [jwt],
+    rules: (rules) => rules.private()
+  },
 })
