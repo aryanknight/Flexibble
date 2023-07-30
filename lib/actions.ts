@@ -1,6 +1,6 @@
 import { GraphQLClient } from "graphql-request";
 
-import { createProjectMutation, createUserMutation, deleteProjectMutation, updateProjectMutation, getProjectByIdQuery, getProjectsOfUserQuery, getUserQuery, projectsQuery } from "@/graphql";
+import { createProjectMutation, createUserMutation, deleteProjectMutation, updateProjectMutation, getProjectByIdQuery, getProjectsOfUserQuery, getUserQuery, projectsQuery, projectsQueryWithout } from "@/graphql";
 import { ProjectForm } from "@/common.types";
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -43,8 +43,7 @@ const makeGraphQLRequest = async (query: string, variables = {}) => {
 
 export const fetchAllProjects = (category?: string | null, endcursor?: string | null) => {
   client.setHeader("x-api-key", apiKey);
-  category = (category==undefined) ?null:category
-  console.log(typeof category)
+  if(category==undefined||category==null)return makeGraphQLRequest(projectsQueryWithout, {endcursor })
   return makeGraphQLRequest(projectsQuery, { category, endcursor });
 };
 
