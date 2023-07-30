@@ -5,7 +5,7 @@ import ProjectCard from "@/components/ProjectCard";
 import { fetchAllProjects } from "@/lib/actions";
 
 type SearchParams = {
-  category?: string | null;
+  category?: string ;
   endcursor?: string | null;
 }
 
@@ -24,7 +24,7 @@ type ProjectSearch = {
     };
   },
 }
-// lk
+
 export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 export const revalidate = 0;
