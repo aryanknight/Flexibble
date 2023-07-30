@@ -1,40 +1,41 @@
 "use client";
-import { FormState, SessionInterface } from "@/common.types";
+import { FormState, ProjectInterface, SessionInterface } from "@/common.types";
 import Image from "next/image";
 import { ChangeEvent, useState } from "react";
 import FormField from "./FormField";
 import { categoryFilters } from "@/constant";
 import CustomMenu from "./CustomMenu";
 import Button from "./Button";
-import { createNewProject, fetchToken } from "@/lib/actions";
+import { createNewProject, fetchToken, updateProject } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 
 type Props = {
-  type: string;
-  session: SessionInterface;
+  type: string,
+  session: SessionInterface,
+  project?:ProjectInterface
 };
 
-export default function ProjectForm({ type, session }: Props) {
+export default function ProjectForm({ type, session, project }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // const [form, setForm] = useState<FormState>({
-  //     title: project?.title || "",
-  //     description: project?.description || "",
-  //     image: project?.image || "",
-  //     liveSiteUrl: project?.liveSiteUrl || "",
-  //     githubUrl: project?.githubUrl || "",
-  //     category: project?.category || ""
-  // })
+  const [form, setForm] = useState<FormState>({
+      title: project?.title || "",
+      description: project?.description || "",
+      image: project?.image || "",
+      liveSiteUrl: project?.liveSiteUrl || "",
+      githubUrl: project?.githubUrl || "",
+      category: project?.category || ""
+  })
 
   const router=useRouter();
 
-  const [form, setForm] = useState<FormState>({
-    title: "",
-    description: "",
-    image: "",
-    liveSiteUrl: "",
-    githubUrl: "",
-    category: "",
-  });
+  // const [form, setForm] = useState<FormState>({
+  //   title: "",
+  //   description: "",
+  //   image: "",
+  //   liveSiteUrl: "",
+  //   githubUrl: "",
+  //   category: "",
+  // });
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,8 +44,13 @@ export default function ProjectForm({ type, session }: Props) {
     const {token}=await fetchToken();
     try {
         if(type=='create'){
-            await createNewProject(form,session?.user?.id,token);
-            router.push('/');
+          await createNewProject(form,session?.user?.id,token);
+          router.push('/');
+        }
+
+        if(type=='edit'){
+          await updateProject(form,project?.id as string,token);
+          router.push("/");
         }
     }catch (error) {
         console.log(error);
